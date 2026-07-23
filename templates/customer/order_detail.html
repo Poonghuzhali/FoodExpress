@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Order {{ order.order_id }}{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="section-title">Order #{{ order.order_id }}</h1>
+    <p style="color:var(--gray-500);margin-bottom:2rem;">Placed on {{ order.created_at|date:"F d, Y \a\\t h:i A" }} · {{ order.restaurant.name }}</p>
+
+    <div class="tracking-container" style="margin-bottom:2rem;">
+        <h3 style="margin-bottom:1.5rem;">Live Order Tracking</h3>
+        <div class="tracking-progress">
+            <div class="tracking-progress-bar" data-progress="{{ order.status_progress|floatformat:0 }}" style="width:0;"></div>
+        </div>
+        <div class="tracking-steps">
+            {% for step, label, icon in tracking_steps %}
+            <div class="tracking-step {% if current_index >= forloop.counter0 %}completed{% endif %}{% if current_index == forloop.counter0 %} active{% endif %}">
+                <div class="step-icon">{{ icon }}</div><span>{{ label }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <p style="text-align:center;margin-top:1.5rem;font-weight:600;color:var(--primary);">Current Status: {{ order.get_status_display }}</p>
+    </div>
+
+    <div class="cart-layout">
+        <div class="table-container">
+            <table class="data-table">
+                <thead><tr><th>Item</th><th>Qty</th><th>Price</th></tr></thead>
+                <tbody>
+                    {% for item in order.items.all %}
+                    <tr><td>{{ item.food_name }}</td><td>{{ item.quantity }}</td><td>₹{{ item.subtotal }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="order-summary">
+            <div class="summary-row"><span>Subtotal</span><span>₹{{ order.subtotal }}</span></div>
+            {% if order.discount %}<div class="summary-row"><span>Discount</span><span>-₹{{ order.discount }}</span></div>{% endif %}
+            <div class="summary-row"><span>Delivery</span><span>₹{{ order.delivery_fee }}</span></div>
+            <div class="summary-row"><span>Tax</span><span>₹{{ order.tax }}</span></div>
+            <div class="summary-row total"><span>Total</span><span>₹{{ order.total }}</span></div>
+            {% if order.payment %}
+            <div class="summary-row" style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--gray-200);">
+                <span>Payment</span>
+                <span>{{ order.payment.get_payment_method_display }} · {{ order.payment.get_status_display }}</span>
+            </div>
+            {% endif %}
+            {% if can_review %}
+            <a href="{% url 'add_review' order.order_id %}" class="btn btn-primary btn-block" style="margin-top:1rem;">⭐ Rate & Review</a>
+            {% elif existing_review %}
+            <div class="review-card" style="margin-top:1rem;padding:1rem;">
+                <strong>Your Review</strong>
+                <div class="review-stars" style="margin:0.5rem 0;">
+                    {% for i in "12345" %}
+                    <span class="star {% if forloop.counter <= existing_review.rating %}filled{% endif %}">★</span>
+                    {% endfor %}
+                </div>
+                <p style="color:var(--gray-500);font-size:0.9rem;">{{ existing_review.comment }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

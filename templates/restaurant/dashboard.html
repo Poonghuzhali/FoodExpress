@@ -1,0 +1,38 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Restaurant Dashboard{% endblock %}
+
+{% block sidebar %}
+{% include 'includes/restaurant_sidebar.html' %}
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Welcome, {{ restaurant.name }}</h1>
+    <p style="color:var(--gray-500);">Manage your restaurant operations</p>
+</div>
+<div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon orange">📦</div><div class="stat-value" data-counter="{{ stats.total_orders }}">0</div><div class="stat-label">Total Orders</div></div>
+    <div class="stat-card"><div class="stat-icon pink">⏳</div><div class="stat-value" data-counter="{{ stats.pending_orders }}">0</div><div class="stat-label">Pending</div></div>
+    <div class="stat-card"><div class="stat-icon teal">📅</div><div class="stat-value" data-counter="{{ stats.today_orders }}">0</div><div class="stat-label">Today's Orders</div></div>
+    <div class="stat-card"><div class="stat-icon yellow">💰</div><div class="stat-value">₹{{ stats.today_sales }}</div><div class="stat-label">Today's Sales</div></div>
+</div>
+<h2 style="margin-bottom:1rem;">Recent Orders</h2>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>
+            {% for order in recent_orders %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.customer.username }}</td>
+                <td>₹{{ order.total }}</td>
+                <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+                <td>{{ order.created_at|date:"M d, H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" style="text-align:center;color:var(--gray-500);">No orders yet</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

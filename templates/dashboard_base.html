@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand">🍔 FoodExpress</div>
+        <nav class="sidebar-nav">
+            {% block sidebar %}{% endblock %}
+        </nav>
+    </aside>
+    <main class="dashboard-content">
+        {% block dashboard_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

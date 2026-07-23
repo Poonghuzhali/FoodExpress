@@ -1,0 +1,15 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Restaurant Profile{% endblock %}
+{% block sidebar %}
+{% include 'includes/restaurant_sidebar.html' %}
+{% endblock %}
+{% block dashboard_content %}
+<h1>Restaurant Profile</h1>
+<div class="form-container" style="max-width:600px;margin:2rem 0;">
+    <form method="post" enctype="multipart/form-data" class="validated-form" novalidate>
+        {% csrf_token %}
+        {% include 'includes/form_fields.html' %}
+        <button type="submit" class="btn btn-primary">Save Profile</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="section-title">Checkout</h1>
+    <div class="cart-layout">
+        <div class="checkout-form-wrap">
+            <form method="post" id="checkout-form" class="validated-form" novalidate>
+                {% csrf_token %}
+
+                <div class="checkout-section">
+                    <h3>📍 Delivery Details</h3>
+                    <div class="form-group">
+                        <label>Delivery Address</label>
+                        {{ form.delivery_address }}
+                        {% if form.delivery_address.errors %}<div class="form-error">{{ form.delivery_address.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        {{ form.delivery_phone }}
+                        {% if form.delivery_phone.errors %}<div class="form-error">{{ form.delivery_phone.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label>Special Instructions (optional)</label>
+                        {{ form.special_instructions }}
+                    </div>
+                    <div class="form-group">
+                        <label>Coupon Code (optional)</label>
+                        {{ form.coupon_code }}
+                    </div>
+                </div>
+
+                <div class="checkout-section">
+                    <h3>💳 Payment Method</h3>
+                    <div class="payment-methods">
+                        {% for radio in form.payment_method %}
+                        <label class="payment-option" data-method="{{ radio.data.value }}">
+                            {{ radio.tag }}
+                            <span class="payment-option-label">{{ radio.choice_label }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    {% if form.payment_method.errors %}<div class="form-error">{{ form.payment_method.errors.0 }}</div>{% endif %}
+
+                    <!-- Card Payment -->
+                    <div id="payment-card" class="payment-details-panel">
+                        <div class="demo-card-hint">
+                            <strong>Demo test cards</strong>
+                            <p>4242 4242 4242 4242 · 4111 1111 1111 1111 · 5555 5555 5555 4444</p>
+                            <p>CVV: exactly 3 digits · Expiry: any future date (e.g. 12/28)</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Cardholder Name</label>
+                            {{ form.card_holder }}
+                            {% if form.card_holder.errors %}<div class="form-error">{{ form.card_holder.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label>Card Number</label>
+                            {{ form.card_number }}
+                            {% if form.card_number.errors %}<div class="form-error">{{ form.card_number.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Expiry (MM)</label>
+                                {{ form.expiry_month }}
+                            </div>
+                            <div class="form-group">
+                                <label>Expiry (YY)</label>
+                                {{ form.expiry_year }}
+                            </div>
+                            <div class="form-group">
+                                <label>CVV</label>
+                                {{ form.cvv }}
+                            </div>
+                        </div>
+                        {% if form.expiry_month.errors %}<div class="form-error">{{ form.expiry_month.errors.0 }}</div>{% endif %}
+                        {% if form.cvv.errors %}<div class="form-error">{{ form.cvv.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <!-- UPI Payment -->
+                    <div id="payment-upi" class="payment-details-panel">
+                        <div class="demo-card-hint">
+                            <strong>Demo UPI</strong>
+                            <p>Use format: yourname@upi or 9876543210@paytm</p>
+                        </div>
+                        <div class="form-group">
+                            <label>UPI ID</label>
+                            {{ form.upi_id }}
+                            {% if form.upi_id.errors %}<div class="form-error">{{ form.upi_id.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Wallet Payment -->
+                    <div id="payment-wallet" class="payment-details-panel">
+                        <div class="demo-card-hint">
+                            <strong>Demo Wallet PIN</strong>
+                            <p>Use PIN: <strong>1234</strong></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Wallet PIN</label>
+                            {{ form.wallet_pin }}
+                            {% if form.wallet_pin.errors %}<div class="form-error">{{ form.wallet_pin.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    <!-- COD -->
+                    <div id="payment-cod" class="payment-details-panel">
+                        <div class="demo-card-hint">
+                            <p>Pay with cash when your order is delivered. No online validation needed.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="payment-errors" class="alert alert-error" style="display:none;"></div>
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="pay-btn">
+                    🔒 Validate & Place Order
+                </button>
+            </form>
+        </div>
+
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            {% for item in cart.items.all %}
+            <div class="summary-row"><span>{{ item.quantity }}x {{ item.food_item.name }}</span><span>₹{{ item.subtotal }}</span></div>
+            {% endfor %}
+            <div class="summary-row"><span>Delivery Fee</span><span>₹40</span></div>
+            <div class="summary-row"><span>Tax (5%)</span><span>₹{{ cart.total }}</span></div>
+            <div class="summary-row total"><span>Estimated Total</span><span>₹{{ cart.total }}</span></div>
+            <p style="font-size:0.85rem;color:var(--gray-500);margin-top:1rem;">💡 Try coupon <strong>WELCOME20</strong> for 20% off!</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.checkout-form-wrap { background: var(--white); padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.checkout-section { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-200); }
+.checkout-section h3 { margin-bottom: 1.25rem; font-size: 1.1rem; }
+.form-control { width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--gray-200); border-radius: var(--radius-sm); font-family: inherit; transition: var(--transition); }
+.form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(255,107,53,0.1); }
+.form-control.is-invalid { border-color: var(--danger); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+.payment-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; }
+.payment-option { display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 2px solid var(--gray-200); border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); }
+.payment-option.selected, .payment-option:has(input:checked) { border-color: var(--primary); background: rgba(255,107,53,0.05); }
+.payment-option input { accent-color: var(--primary); }
+.payment-details-panel { display: none; animation: fadeInUp 0.3s ease; }
+.payment-details-panel.active { display: block; }
+.demo-card-hint { background: #FFF8F0; border: 1px dashed var(--primary); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.25rem; font-size: 0.85rem; color: var(--gray-700); }
+.demo-card-hint p { margin-top: 0.35rem; color: var(--gray-500); }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/checkout.js' %}"></script>
+{% endblock %}

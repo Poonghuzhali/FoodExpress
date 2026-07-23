@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Restaurant Registration{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="form-container animate-fade-up" style="max-width:520px;">
+        <h1 class="form-title">Partner With Us</h1>
+        <p class="form-subtitle">Register your restaurant on FoodExpress</p>
+        <form method="post" class="validated-form" novalidate>
+            {% csrf_token %}
+            {% include 'includes/form_fields.html' %}
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Register Restaurant</button>
+        </form>
+        <p class="form-footer"><a href="{% url 'login' %}">Already registered? Sign In</a></p>
+    </div>
+</div>
+{% endblock %}

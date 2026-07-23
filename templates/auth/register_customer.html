@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="form-container animate-fade-up" style="max-width:520px;">
+        <h1 class="form-title">Create Account</h1>
+        <p class="form-subtitle">Join FoodExpress and start ordering</p>
+        <form method="post" class="validated-form" novalidate>
+            {% csrf_token %}
+            {% include 'includes/form_fields.html' %}
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Create Account</button>
+        </form>
+        <p class="form-footer">Already have an account? <a href="{% url 'login' %}">Sign In</a></p>
+        <p class="form-footer" style="margin-top:0.5rem;">
+            <a href="{% url 'register_restaurant' %}">Register as Restaurant</a> ·
+            <a href="{% url 'register_delivery' %}">Register as Delivery Partner</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

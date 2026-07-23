@@ -1,0 +1,30 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Earnings{% endblock %}
+{% block sidebar %}
+{% include 'includes/delivery_sidebar.html' %}
+{% endblock %}
+{% block dashboard_content %}
+<h1>Earnings</h1>
+<div class="stat-card" style="max-width:300px;margin:2rem 0;">
+    <div class="stat-icon yellow">💰</div>
+    <div class="stat-value">₹{{ partner.total_earnings }}</div>
+    <div class="stat-label">Total Earnings · {{ partner.total_deliveries }} deliveries</div>
+</div>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Order ID</th><th>Restaurant</th><th>Delivered</th><th>Earning</th></tr></thead>
+        <tbody>
+            {% for order in deliveries %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.restaurant.name }}</td>
+                <td>{{ order.delivered_at|date:"M d, Y H:i" }}</td>
+                <td>₹50</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" style="text-align:center;">No completed deliveries yet</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

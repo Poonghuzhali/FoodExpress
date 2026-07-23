@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FoodExpress{% endblock %} | Food Delivery</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <a href="{% url 'home' %}" class="logo">
+                <div class="logo-icon">🍔</div>
+                FoodExpress
+            </a>
+            <form class="search-bar" action="{% url 'search' %}" method="get">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="q" placeholder="Search restaurants, cuisines, dishes..." value="{{ request.GET.q|default:'' }}">
+            </form>
+            <button type="button" class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <div class="nav-links" id="nav-links">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'restaurant_list' %}" class="nav-link">Restaurants</a>
+                {% if user.is_authenticated %}
+                    {% if user.role == 'customer' %}
+                        <a href="{% url 'order_list' %}" class="nav-link">Orders</a>
+                        <a href="{% url 'view_cart' %}" class="cart-btn nav-link-mobile-cart">
+                            🛒 Cart
+                            {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+                        </a>
+                        <a href="{% url 'customer_profile' %}" class="nav-link">{{ user.first_name|default:user.username }}</a>
+                    {% elif user.role == 'restaurant' %}
+                        <a href="{% url 'restaurant_dashboard' %}" class="nav-link">Dashboard</a>
+                    {% elif user.role == 'delivery' %}
+                        <a href="{% url 'delivery_dashboard' %}" class="nav-link">Dashboard</a>
+                    {% elif user.is_superuser or user.role == 'admin' %}
+                        <a href="{% url 'admin_dashboard' %}" class="nav-link">Admin</a>
+                    {% endif %}
+                    <a href="{% url 'logout' %}" class="btn btn-sm btn-outline nav-btn-mobile">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link">Login</a>
+                    <a href="{% url 'register' %}" class="btn btn-sm btn-primary nav-btn-mobile">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+    </nav>
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    {% block footer %}
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="logo"><div class="logo-icon">🍔</div> FoodExpress</div>
+                <p>Delicious food delivered to your doorstep. Order from the best restaurants in your city with fast delivery and great offers.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'restaurant_list' %}">Restaurants</a>
+                <a href="{% url 'register' %}">Sign Up</a>
+                <a href="{% url 'login' %}">Login</a>
+            </div>
+            <div class="footer-links">
+                <h4>For Partners</h4>
+                <a href="{% url 'register_restaurant' %}">Restaurant Partner</a>
+                <a href="{% url 'register_delivery' %}">Delivery Partner</a>
+            </div>
+            <div class="footer-links">
+                <h4>Contact</h4>
+                <a href="mailto:support@foodexpress.com">support@foodexpress.com</a>
+                <a href="tel:+911800123456">1800-123-456</a>
+            </div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 FoodExpress. All rights reserved.</div>
+    </footer>
+    {% endblock %}
+
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/form-validation.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

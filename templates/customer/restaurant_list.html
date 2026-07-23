@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load food_images %}
+{% block title %}Restaurants{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="section-header">
+        <div>
+            <h1 class="section-title">All Restaurants</h1>
+            <p class="section-subtitle">{{ restaurants.count }} restaurants available</p>
+        </div>
+    </div>
+
+    <form class="filter-bar" method="get">
+        <input type="text" name="q" placeholder="Search..." value="{{ query }}">
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="cuisine">
+            <option value="">All Cuisines</option>
+            {% for c in cuisines %}
+            <option value="{{ c }}" {% if selected_cuisine == c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+    </form>
+
+    <div class="cards-grid">
+        {% for restaurant in restaurants %}
+        <a href="{% url 'restaurant_detail' restaurant.pk %}" class="card">
+            <div class="card-image">
+                <img src="{% restaurant_image restaurant %}" alt="{{ restaurant.name }}" loading="lazy">
+                {% if restaurant.is_open %}<span class="card-badge">Open</span>{% endif %}
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">{{ restaurant.name }}</h3>
+                <div class="card-meta">
+                    <span class="rating"><span class="star">★</span> {{ restaurant.rating }}</span>
+                    <span>🕐 {{ restaurant.delivery_time }}</span>
+                </div>
+                <p class="card-desc">{{ restaurant.cuisine_type }} · Min order ₹{{ restaurant.min_order }}</p>
+            </div>
+        </a>
+        {% empty %}
+        <div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-icon">🔍</div>
+            <h3>No restaurants found</h3>
+            <p>Try adjusting your filters</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

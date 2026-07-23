@@ -1,0 +1,48 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Orders{% endblock %}
+{% block sidebar %}
+{% include 'includes/restaurant_sidebar.html' %}
+{% endblock %}
+{% block dashboard_content %}
+<h1>Orders</h1>
+<form class="filter-bar" method="get">
+    <select name="status">
+        <option value="">All Status</option>
+        {% for val, label in status_choices %}
+        <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+</form>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.customer.username }}</td>
+                <td>{% for i in order.items.all %}{{ i.quantity }}x {{ i.food_name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                <td>₹{{ order.total }}</td>
+                <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+                <td>
+                    {% if order.status == 'pending' %}
+                    <form method="post" action="{% url 'update_order_status' order.order_id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button name="status" value="confirmed" class="btn btn-sm btn-success">Accept</button>
+                        <button name="status" value="rejected" class="btn btn-sm btn-danger">Reject</button>
+                    </form>
+                    {% elif order.status == 'confirmed' %}
+                    <form method="post" action="{% url 'update_order_status' order.order_id %}">{% csrf_token %}<button name="status" value="preparing" class="btn btn-sm btn-primary">Start Preparing</button></form>
+                    {% elif order.status == 'preparing' %}
+                    <form method="post" action="{% url 'update_order_status' order.order_id %}">{% csrf_token %}<button name="status" value="ready" class="btn btn-sm btn-primary">Mark Ready</button></form>
+                    {% else %}—{% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align:center;">No orders</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

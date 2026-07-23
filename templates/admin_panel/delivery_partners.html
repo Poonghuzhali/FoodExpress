@@ -1,0 +1,24 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Delivery Partners{% endblock %}
+{% block sidebar %}
+{% include 'includes/admin_sidebar.html' %}
+{% endblock %}{% block dashboard_content %}
+<h1>Delivery Partners</h1>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Name</th><th>Vehicle</th><th>Deliveries</th><th>Earnings</th><th>Available</th><th>Approved</th></tr></thead>
+        <tbody>
+            {% for p in partners %}
+            <tr>
+                <td>{{ p.user.username }}</td>
+                <td>{{ p.vehicle_type }}</td>
+                <td>{{ p.total_deliveries }}</td>
+                <td>₹{{ p.total_earnings }}</td>
+                <td>{% if p.is_available %}✅{% else %}❌{% endif %}</td>
+                <td>{% if p.is_approved %}✅{% else %}❌{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

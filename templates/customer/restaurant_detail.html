@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load food_images %}
+{% block title %}{{ restaurant.name }}{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="restaurant-header">
+        <div class="restaurant-cover">
+            <img src="{% restaurant_image restaurant cover=True %}" alt="{{ restaurant.name }}">
+        </div>
+        <div class="restaurant-info">
+            <div class="restaurant-logo">
+                <img src="{% restaurant_image restaurant %}" alt="{{ restaurant.name }}">
+            </div>
+            <div>
+                <h1 style="font-size:1.75rem;font-weight:800;">{{ restaurant.name }}</h1>
+                <div class="card-meta" style="margin-top:0.5rem;">
+                    <span class="rating"><span class="star">★</span> {{ restaurant.rating }}</span>
+                    <span>{{ restaurant.cuisine_type }}</span>
+                    <span>🕐 {{ restaurant.delivery_time }}</span>
+                    <span>📍 {{ restaurant.address|truncatewords:8 }}</span>
+                </div>
+                <p style="color:var(--gray-500);margin-top:0.5rem;">{{ restaurant.description }}</p>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title" style="margin-bottom:1.5rem;">Menu</h2>
+    <div class="menu-grid">
+        {% for item in menu_items %}
+        <div class="menu-item-card">
+            <div class="menu-item-image">
+                <img src="{% food_image item thumb=True %}" alt="{{ item.name }}" loading="lazy">
+            </div>
+            <div class="menu-item-details">
+                <div class="menu-item-name">
+                    {% if item.is_vegetarian %}<span class="veg-badge"></span>{% else %}<span class="veg-badge nonveg-badge"></span>{% endif %}
+                    {{ item.name }}
+                </div>
+                <p class="menu-item-desc">{{ item.description|truncatewords:12 }}</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <span class="price">₹{{ item.price }}</span>
+                    {% if user.is_authenticated and user.role == 'customer' %}
+                    <form method="post" action="{% url 'add_to_cart' item.pk %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-primary add-to-cart-btn" data-url="{% url 'add_to_cart' item.pk %}">Add +</button>
+                    </form>
+                    {% elif not user.is_authenticated %}
+                    <a href="{% url 'login' %}" class="btn btn-sm btn-outline">Login to Order</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state"><div class="empty-icon">📋</div><h3>No menu items</h3></div>
+        {% endfor %}
+    </div>
+
+    {% if reviews or review_stats.total_reviews %}
+    <section style="margin-top:3rem;">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Ratings & Reviews</h2>
+                {% if review_stats.total_reviews %}
+                <p class="section-subtitle">
+                    <span class="rating"><span class="star">★</span> {{ review_stats.avg_rating|floatformat:1 }}</span>
+                    · {{ review_stats.total_reviews }} review{{ review_stats.total_reviews|pluralize }}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="reviews-list">
+            {% for review in reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-avatar">{{ review.customer.username|slice:":1"|upper }}</div>
+                    <div>
+                        <strong>{{ review.customer.first_name|default:review.customer.username }}</strong>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                            <span class="star {% if forloop.counter <= review.rating %}filled{% endif %}">★</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <span class="review-date">{{ review.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if review.comment %}
+                <p class="review-comment">{{ review.comment }}</p>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p style="color:var(--gray-500);">No reviews yet. Be the first to order and review!</p>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="section-title">Search Results{% if query %} for "{{ query }}"{% endif %}</h1>
+
+    {% if restaurants %}
+    <h2 style="margin:2rem 0 1rem;font-size:1.25rem;">Restaurants</h2>
+    <div class="cards-grid">
+        {% for r in restaurants %}
+        <a href="{% url 'restaurant_detail' r.pk %}" class="card">
+            <div class="card-body">
+                <h3 class="card-title">{{ r.name }}</h3>
+                <div class="card-meta"><span class="rating"><span class="star">★</span> {{ r.rating }}</span><span>{{ r.cuisine_type }}</span></div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if food_items %}
+    <h2 style="margin:2rem 0 1rem;font-size:1.25rem;">Dishes</h2>
+    <div class="menu-grid">
+        {% for item in food_items %}
+        <div class="menu-item-card">
+            <div class="menu-item-details">
+                <div class="menu-item-name">{{ item.name }}</div>
+                <p class="menu-item-desc">{{ item.restaurant.name }}</p>
+                <span class="price">₹{{ item.price }}</span>
+                <a href="{% url 'restaurant_detail' item.restaurant.pk %}" class="btn btn-sm btn-primary" style="margin-top:0.5rem;">View</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not restaurants and not food_items %}
+    <div class="empty-state"><div class="empty-icon">🔍</div><h3>No results found</h3></div>
+    {% endif %}
+</div>
+{% endblock %}

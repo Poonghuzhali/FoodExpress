@@ -1,0 +1,8 @@
+{% with nav=request.resolver_match.url_name %}
+<a href="{% url 'restaurant_dashboard' %}" class="{% if nav == 'restaurant_dashboard' %}active{% endif %}">📊 Dashboard</a>
+<a href="{% url 'restaurant_profile' %}" class="{% if nav == 'restaurant_profile' %}active{% endif %}">🏪 Profile</a>
+<a href="{% url 'manage_menu' %}" class="{% if nav == 'manage_menu' or nav == 'add_menu_item' or nav == 'edit_menu_item' %}active{% endif %}">📋 Menu</a>
+<a href="{% url 'restaurant_orders' %}" class="{% if nav == 'restaurant_orders' %}active{% endif %}">📦 Orders</a>
+<a href="{% url 'restaurant_sales' %}" class="{% if nav == 'restaurant_sales' %}active{% endif %}">💰 Sales</a>
+<a href="{% url 'home' %}">🏠 Back to Site</a>
+{% endwith %}

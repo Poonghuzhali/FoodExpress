@@ -1,0 +1,30 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block sidebar %}
+{% include 'includes/admin_sidebar.html' %}
+{% endblock %}{% block dashboard_content %}
+<h1>Admin Dashboard</h1>
+<div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon orange">👥</div><div class="stat-value" data-counter="{{ stats.total_users }}">0</div><div class="stat-label">Users</div></div>
+    <div class="stat-card"><div class="stat-icon teal">🏪</div><div class="stat-value" data-counter="{{ stats.total_restaurants }}">0</div><div class="stat-label">Restaurants</div></div>
+    <div class="stat-card"><div class="stat-icon pink">🛵</div><div class="stat-value" data-counter="{{ stats.total_delivery }}">0</div><div class="stat-label">Delivery Partners</div></div>
+    <div class="stat-card"><div class="stat-icon yellow">💰</div><div class="stat-value">₹{{ stats.total_revenue }}</div><div class="stat-label">Revenue</div></div>
+</div>
+<h2 style="margin-bottom:1rem;">Recent Orders</h2>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Order ID</th><th>Customer</th><th>Restaurant</th><th>Total</th><th>Status</th></tr></thead>
+        <tbody>
+            {% for order in recent_orders %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.customer.username }}</td>
+                <td>{{ order.restaurant.name }}</td>
+                <td>₹{{ order.total }}</td>
+                <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

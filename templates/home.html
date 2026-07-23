@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static food_images %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-content animate-fade-up">
+            <h1>Delicious Food <span>Delivered Fast</span></h1>
+            <p>Order from your favorite restaurants and get fresh, hot meals delivered to your doorstep in minutes.</p>
+            <div class="hero-buttons">
+                <a href="{% url 'restaurant_list' %}" class="btn btn-primary btn-lg">Order Now</a>
+                <a href="{% url 'register' %}" class="btn btn-outline btn-lg" style="color:white;border-color:white;">Sign Up Free</a>
+            </div>
+        </div>
+        <div class="hero-image animate-fade-up animate-delay-2">
+            <img src="{% hero_image %}" alt="Delicious Food Spread">
+            <div class="hero-badge">
+                <strong>500+</strong>
+                Restaurants Near You
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="main-content">
+    <section class="section animate-fade-up">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Browse Categories</h2>
+                <p class="section-subtitle">What's on your mind?</p>
+            </div>
+        </div>
+        <div class="category-scroll">
+            {% for cat in categories %}
+            <a href="{% url 'restaurant_list' %}?category={{ cat.id }}" class="category-pill category-pill-image">
+                <div class="category-pill-img">
+                    <img src="{% category_image cat %}" alt="{{ cat.name }}" loading="lazy">
+                </div>
+                <span class="icon">{{ cat.icon }}</span>
+                <span>{{ cat.name }}</span>
+            </a>
+            {% empty %}
+            <a href="{% url 'restaurant_list' %}?category=1" class="category-pill category-pill-image">
+                <div class="category-pill-img"><img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=200&h=200&fit=crop" alt="Pizza"></div>
+                <span class="icon">🍕</span><span>Pizza</span>
+            </a>
+            <a href="{% url 'restaurant_list' %}" class="category-pill category-pill-image">
+                <div class="category-pill-img"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58f5?w=200&h=200&fit=crop" alt="Burgers"></div>
+                <span class="icon">🍔</span><span>Burgers</span>
+            </a>
+            <a href="{% url 'restaurant_list' %}" class="category-pill category-pill-image">
+                <div class="category-pill-img"><img src="https://images.unsplash.com/photo-1585937421612-70a00835636e?w=200&h=200&fit=crop" alt="Indian"></div>
+                <span class="icon">🍛</span><span>Indian</span>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Popular Restaurants</h2>
+                <p class="section-subtitle">Top rated near you</p>
+            </div>
+            <a href="{% url 'restaurant_list' %}" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div class="cards-grid">
+            {% for restaurant in restaurants %}
+            <a href="{% url 'restaurant_detail' restaurant.pk %}" class="card restaurant-card">
+                <div class="card-image">
+                    <img src="{% restaurant_image restaurant %}" alt="{{ restaurant.name }}" loading="lazy">
+                    {% if restaurant.is_open %}<span class="card-badge">Open Now</span>{% endif %}
+                    <span class="card-cuisine-tag">{{ restaurant.cuisine_type }}</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ restaurant.name }}</h3>
+                    <div class="card-meta">
+                        <span class="rating"><span class="star">★</span> {{ restaurant.rating }}</span>
+                        <span>🕐 {{ restaurant.delivery_time }}</span>
+                    </div>
+                    <p class="card-desc">{{ restaurant.description|truncatewords:15 }}</p>
+                </div>
+            </a>
+            {% empty %}
+            <div class="empty-state" style="grid-column:1/-1;">
+                <div class="empty-icon">🏪</div>
+                <h3>No restaurants yet</h3>
+                <p>Run seed data to populate restaurants</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Featured Dishes</h2>
+                <p class="section-subtitle">Trending this week</p>
+            </div>
+        </div>
+        <div class="cards-grid">
+            {% for item in featured_items %}
+            <div class="card dish-card">
+                <div class="card-image">
+                    <img src="{% food_image item %}" alt="{{ item.name }}" loading="lazy">
+                    {% if item.is_vegetarian %}
+                    <span class="card-badge veg-tag">🟢 Veg</span>
+                    {% else %}
+                    <span class="card-badge nonveg-tag">🔴 Non-Veg</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ item.name }}</h3>
+                    <div class="card-meta">
+                        <span>{{ item.restaurant.name }}</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="price">₹{{ item.price }}</span>
+                        <a href="{% url 'restaurant_detail' item.restaurant.pk %}" class="btn btn-sm btn-primary">Order</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state" style="grid-column:1/-1;">
+                <div class="empty-icon">🍽️</div>
+                <h3>No dishes available</h3>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="promo-banner">
+        <div class="promo-content">
+            <h2>Get 20% Off Your First Order!</h2>
+            <p>Use code <strong>WELCOME20</strong> at checkout</p>
+            <a href="{% url 'register' %}" class="btn btn-lg promo-btn">Sign Up & Save</a>
+        </div>
+        <div class="promo-images">
+            <img src="{% static 'images/promo/pizza.jpg' %}" alt="Pizza" class="promo-float-1">
+            <img src="{% static 'images/promo/burger.jpg' %}" alt="Burger" class="promo-float-2">
+            <img src="{% static 'images/promo/biryani.jpg' %}" alt="Biryani" class="promo-float-3">
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.category-pill-image { padding: 0; overflow: hidden; min-width: 120px; }
+.category-pill-img { width: 100%; height: 70px; overflow: hidden; }
+.category-pill-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+.category-pill-image:hover .category-pill-img img { transform: scale(1.1); }
+.category-pill-image .icon { margin-top: 0.5rem; }
+.category-pill-image span:last-child { padding-bottom: 0.75rem; }
+
+.card-cuisine-tag {
+    position: absolute; bottom: 12px; right: 12px;
+    background: rgba(0,0,0,0.65); color: white;
+    padding: 0.25rem 0.65rem; border-radius: var(--radius-xl);
+    font-size: 0.72rem; font-weight: 600;
+}
+.veg-tag { background: var(--success) !important; }
+.nonveg-tag { background: var(--danger) !important; }
+
+.promo-banner {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: var(--radius-lg); padding: 3rem;
+    color: white; display: flex; align-items: center;
+    justify-content: space-between; gap: 2rem; overflow: hidden;
+    position: relative;
+}
+.promo-content { position: relative; z-index: 2; }
+.promo-content h2 { font-size: 2rem; margin-bottom: 0.75rem; }
+.promo-content p { opacity: 0.9; margin-bottom: 1.5rem; }
+.promo-btn { background: white; color: var(--primary); }
+.promo-images { position: relative; width: 280px; height: 180px; flex-shrink: 0; }
+.promo-images img {
+    position: absolute; width: 110px; height: 110px;
+    border-radius: 50%; object-fit: cover; border: 4px solid white;
+    box-shadow: var(--shadow-md);
+}
+.promo-float-1 { top: 0; left: 20px; animation: float 3s ease-in-out infinite; }
+.promo-float-2 { top: 40px; right: 0; animation: float 3.5s ease-in-out infinite 0.5s; }
+.promo-float-3 { bottom: 0; left: 60px; animation: float 4s ease-in-out infinite 1s; }
+
+@media (max-width: 768px) {
+    .promo-banner { flex-direction: column; text-align: center; }
+    .promo-images { display: none; }
+}
+</style>
+{% endblock %}

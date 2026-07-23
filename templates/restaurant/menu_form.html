@@ -1,0 +1,16 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block sidebar %}
+{% include 'includes/restaurant_sidebar.html' %}
+{% endblock %}
+{% block dashboard_content %}
+<h1>{{ title }}</h1>
+<div class="form-container" style="max-width:560px;margin:2rem 0;">
+    <form method="post" enctype="multipart/form-data" class="validated-form" novalidate>
+        {% csrf_token %}
+        {% include 'includes/form_fields.html' %}
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'manage_menu' %}" class="btn btn-outline">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load food_images %}
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="section-title">Your Cart</h1>
+    {% if cart.items.exists %}
+    <div class="cart-layout">
+        <div>
+            <p style="color:var(--gray-500);margin-bottom:1rem;">From <strong>{{ cart.restaurant.name }}</strong></p>
+            {% for item in cart.items.all %}
+            <div class="cart-item">
+                <div class="cart-item-image">
+                    <img src="{% food_image item.food_item thumb=True %}" alt="{{ item.food_item.name }}" loading="lazy">
+                </div>
+                <div class="cart-item-info">
+                    <div class="cart-item-name">{{ item.food_item.name }}</div>
+                    <div class="cart-item-price">₹{{ item.subtotal }}</div>
+                </div>
+                <form method="post" action="{% url 'update_cart' item.pk %}" class="qty-control">
+                    {% csrf_token %}
+                    <button name="action" value="decrease" class="qty-btn">−</button>
+                    <span style="font-weight:600;min-width:24px;text-align:center;">{{ item.quantity }}</span>
+                    <button name="action" value="increase" class="qty-btn">+</button>
+                    <button name="action" value="remove" class="qty-btn" style="color:var(--danger);margin-left:0.5rem;">✕</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="order-summary">
+            <h3 style="margin-bottom:1rem;">Order Summary</h3>
+            <div class="summary-row"><span>Subtotal</span><span>₹{{ cart.total }}</span></div>
+            <div class="summary-row"><span>Delivery Fee</span><span>₹40</span></div>
+            <div class="summary-row"><span>Tax (5%)</span><span>₹{{ cart.total|floatformat:0 }}</span></div>
+            <div class="summary-row total"><span>Total</span><span>₹{{ cart.total }}</span></div>
+            <a href="{% url 'checkout' %}" class="btn btn-primary btn-block btn-lg" style="margin-top:1.5rem;">Proceed to Checkout</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🛒</div>
+        <h3>Your cart is empty</h3>
+        <p>Add delicious food from restaurants</p>
+        <a href="{% url 'restaurant_list' %}" class="btn btn-primary" style="margin-top:1rem;">Browse Restaurants</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

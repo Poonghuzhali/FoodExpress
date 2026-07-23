@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="form-container animate-fade-up">
+        <h1 class="form-title">Welcome Back</h1>
+        <p class="form-subtitle">Sign in to your FoodExpress account</p>
+        <div class="auth-tabs">
+            <a href="{% url 'login' %}" class="auth-tab active">Customer</a>
+            <a href="{% url 'register_restaurant' %}" class="auth-tab">Restaurant</a>
+            <a href="{% url 'register_delivery' %}" class="auth-tab">Delivery</a>
+        </div>
+        <form method="post" class="validated-form" novalidate>
+            {% csrf_token %}
+            {% include 'includes/form_fields.html' %}
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Sign In</button>
+        </form>
+        <p class="form-footer">Don't have an account? <a href="{% url 'register' %}">Sign Up</a></p>
+    </div>
+</div>
+{% endblock %}

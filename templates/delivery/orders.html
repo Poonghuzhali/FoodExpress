@@ -1,0 +1,51 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Deliveries{% endblock %}
+{% block sidebar %}
+{% include 'includes/delivery_sidebar.html' %}
+{% endblock %}
+{% block dashboard_content %}
+<h1>My Deliveries</h1>
+{% if available_orders %}
+<h2 style="margin:2rem 0 1rem;">Available to Accept</h2>
+<div class="table-container" style="margin-bottom:2rem;">
+    <table class="data-table">
+        <thead><tr><th>Order ID</th><th>Restaurant</th><th>Address</th><th></th></tr></thead>
+        <tbody>
+            {% for order in available_orders %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.restaurant.name }}</td>
+                <td>{{ order.delivery_address|truncatewords:8 }}</td>
+                <td><a href="{% url 'accept_delivery' order.order_id %}" class="btn btn-sm btn-primary">Accept</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+<h2 style="margin-bottom:1rem;">Assigned Deliveries</h2>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Order ID</th><th>Restaurant</th><th>Customer</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.restaurant.name }}</td>
+                <td>{{ order.customer.username }}</td>
+                <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+                <td>
+                    {% if order.status == 'picked_up' %}
+                    <form method="post" action="{% url 'update_delivery_status' order.order_id %}">{% csrf_token %}<button name="status" value="on_the_way" class="btn btn-sm btn-primary">On the Way</button></form>
+                    {% elif order.status == 'on_the_way' %}
+                    <form method="post" action="{% url 'update_delivery_status' order.order_id %}">{% csrf_token %}<button name="status" value="delivered" class="btn btn-sm btn-success">Mark Delivered</button></form>
+                    {% else %}—{% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" style="text-align:center;">No assigned deliveries</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

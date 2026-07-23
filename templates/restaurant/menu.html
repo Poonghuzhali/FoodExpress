@@ -1,0 +1,30 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Manage Menu{% endblock %}
+{% block sidebar %}
+{% include 'includes/restaurant_sidebar.html' %}
+{% endblock %}
+{% block dashboard_content %}
+<div class="section-header"><h1>Menu Items</h1><a href="{% url 'add_menu_item' %}" class="btn btn-primary">+ Add Item</a></div>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Veg</th><th>Available</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for item in menu_items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.category.name|default:"—" }}</td>
+                <td>₹{{ item.price }}</td>
+                <td>{% if item.is_vegetarian %}🟢{% else %}🔴{% endif %}</td>
+                <td>{% if item.is_available %}✅{% else %}❌{% endif %}</td>
+                <td>
+                    <a href="{% url 'edit_menu_item' item.pk %}" class="btn btn-sm btn-outline">Edit</a>
+                    <a href="{% url 'delete_menu_item' item.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this item?')">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align:center;">No menu items. <a href="{% url 'add_menu_item' %}">Add one</a></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

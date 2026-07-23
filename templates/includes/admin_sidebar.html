@@ -1,0 +1,11 @@
+{% with nav=request.resolver_match.url_name %}
+<a href="{% url 'admin_dashboard' %}" class="{% if nav == 'admin_dashboard' %}active{% endif %}">📊 Dashboard</a>
+<a href="{% url 'admin_users' %}" class="{% if nav == 'admin_users' %}active{% endif %}">👥 Users</a>
+<a href="{% url 'admin_restaurants' %}" class="{% if nav == 'admin_restaurants' %}active{% endif %}">🏪 Restaurants</a>
+<a href="{% url 'admin_delivery_partners' %}" class="{% if nav == 'admin_delivery_partners' %}active{% endif %}">🛵 Delivery Partners</a>
+<a href="{% url 'admin_orders' %}" class="{% if nav == 'admin_orders' %}active{% endif %}">📦 Orders</a>
+<a href="{% url 'admin_categories' %}" class="{% if nav == 'admin_categories' %}active{% endif %}">🏷️ Categories</a>
+<a href="{% url 'admin_coupons' %}" class="{% if nav == 'admin_coupons' %}active{% endif %}">🎟️ Coupons</a>
+<a href="{% url 'admin_reports' %}" class="{% if nav == 'admin_reports' %}active{% endif %}">📈 Reports</a>
+<a href="/django-admin/">⚙️ Django Admin</a>
+{% endwith %}

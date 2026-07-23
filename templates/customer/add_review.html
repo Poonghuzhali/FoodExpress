@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Write Review{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="form-container" style="max-width:560px;">
+        <h1 class="form-title">Rate Your Order</h1>
+        <p class="form-subtitle">{{ order.restaurant.name }} · Order #{{ order.order_id }}</p>
+
+        <form method="post" id="review-form" class="validated-form" novalidate>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Your Rating <span class="required-mark">*</span></label>
+                <div class="star-rating-input" id="star-rating">
+                    {% for i in "12345" %}
+                    <button type="button" class="star-btn" data-value="{{ forloop.counter }}" aria-label="{{ forloop.counter }} stars">★</button>
+                    {% endfor %}
+                </div>
+                <p class="rating-label" id="rating-label">Tap to rate (required)</p>
+                {{ form.rating }}
+                {% if form.rating.errors %}<div class="form-error">{{ form.rating.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.comment.id_for_label }}">Your Review <span class="required-mark">*</span></label>
+                {{ form.comment }}
+                {% if form.comment.errors %}<div class="form-error">{{ form.comment.errors.0 }}</div>{% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Submit Review</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.star-rating-input { display: flex; gap: 0.35rem; margin: 0.5rem 0; }
+.star-btn {
+    background: none; border: none; font-size: 2.5rem; color: var(--gray-300);
+    cursor: pointer; transition: transform 0.15s, color 0.15s; padding: 0;
+}
+.star-btn:hover, .star-btn.active { color: #FFB800; transform: scale(1.15); }
+.rating-label { font-size: 0.9rem; color: var(--gray-500); min-height: 1.25rem; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('.star-btn');
+    const input = document.getElementById('rating-input');
+    const label = document.getElementById('rating-label');
+    const labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const val = parseInt(star.dataset.value);
+            input.value = val;
+            stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.value) <= val));
+            label.textContent = labels[val] + ' (' + val + '/5)';
+            label.style.color = '';
+        });
+    });
+});
+</script>
+{% endblock %}

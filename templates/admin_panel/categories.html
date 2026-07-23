@@ -1,0 +1,23 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Categories{% endblock %}
+{% block sidebar %}
+{% include 'includes/admin_sidebar.html' %}
+{% endblock %}{% block dashboard_content %}
+<h1>Food Categories</h1>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+    <div class="form-container" style="margin:0;">
+        <h3>Add Category</h3>
+        <form method="post" class="validated-form" novalidate>
+            {% csrf_token %}
+            {% include 'includes/form_fields.html' %}
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+    </div>
+    <div class="table-container">
+        <table class="data-table">
+            <thead><tr><th>Icon</th><th>Name</th><th>Active</th></tr></thead>
+            <tbody>{% for c in categories %}<tr><td>{{ c.icon }}</td><td>{{ c.name }}</td><td>{% if c.is_active %}✅{% else %}❌{% endif %}</td></tr>{% endfor %}</tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Manage Restaurants{% endblock %}
+{% block sidebar %}
+{% include 'includes/admin_sidebar.html' %}
+{% endblock %}{% block dashboard_content %}
+<h1>Manage Restaurants</h1>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Name</th><th>Owner</th><th>Cuisine</th><th>Rating</th><th>Approved</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for r in restaurants %}
+            <tr>
+                <td>{{ r.name }}</td>
+                <td>{{ r.user.username }}</td>
+                <td>{{ r.cuisine_type }}</td>
+                <td>{{ r.rating }}</td>
+                <td>{% if r.is_approved %}✅{% else %}❌{% endif %}</td>
+                <td><a href="{% url 'admin_toggle_restaurant' r.pk %}" class="btn btn-sm btn-outline">{% if r.is_approved %}Disapprove{% else %}Approve{% endif %}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

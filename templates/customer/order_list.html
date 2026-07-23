@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="section-title">My Orders</h1>
+    {% if orders %}
+    <div class="table-container">
+        <table class="data-table">
+            <thead><tr><th>Order ID</th><th>Restaurant</th><th>Total</th><th>Status</th><th>Date</th><th></th></tr></thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><strong>{{ order.order_id }}</strong></td>
+                    <td>{{ order.restaurant.name }}</td>
+                    <td>₹{{ order.total }}</td>
+                    <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                    <td><a href="{% url 'order_detail' order.order_id %}" class="btn btn-sm btn-outline">Track</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state"><div class="empty-icon">📦</div><h3>No orders yet</h3><a href="{% url 'restaurant_list' %}" class="btn btn-primary" style="margin-top:1rem;">Order Now</a></div>
+    {% endif %}
+</div>
+{% endblock %}

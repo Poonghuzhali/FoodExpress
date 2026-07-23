@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: foodexpress
+    runtime: python
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: gunicorn fooddelivery.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.3"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: foodexpress-db
+          property: connectionString
+
+databases:
+  - name: foodexpress-db
+    plan: free

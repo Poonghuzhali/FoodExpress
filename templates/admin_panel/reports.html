@@ -1,0 +1,33 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Reports{% endblock %}
+{% block sidebar %}
+{% include 'includes/admin_sidebar.html' %}
+{% endblock %}{% block dashboard_content %}
+<h1>Reports & Analytics</h1>
+<div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon yellow">💰</div><div class="stat-value">₹{{ total_revenue }}</div><div class="stat-label">Total Revenue</div></div>
+    <div class="stat-card"><div class="stat-icon orange">📦</div><div class="stat-value" data-counter="{{ total_orders }}">0</div><div class="stat-label">Total Orders</div></div>
+    <div class="stat-card"><div class="stat-icon teal">👥</div><div class="stat-value" data-counter="{{ total_customers }}">0</div><div class="stat-label">Customers</div></div>
+</div>
+<h2 style="margin:2rem 0 1rem;">Orders by Status</h2>
+<div class="table-container" style="margin-bottom:2rem;">
+    <table class="data-table">
+        <thead><tr><th>Status</th><th>Count</th></tr></thead>
+        <tbody>{% for s in orders_by_status %}<tr><td>{{ s.status|title }}</td><td>{{ s.count }}</td></tr>{% endfor %}</tbody>
+    </table>
+</div>
+<h2 style="margin-bottom:1rem;">Top Restaurants</h2>
+<div class="table-container" style="margin-bottom:2rem;">
+    <table class="data-table">
+        <thead><tr><th>Restaurant</th><th>Orders</th><th>Revenue</th></tr></thead>
+        <tbody>{% for r in top_restaurants %}<tr><td>{{ r.name }}</td><td>{{ r.order_count }}</td><td>₹{{ r.revenue|default:0 }}</td></tr>{% endfor %}</tbody>
+    </table>
+</div>
+<h2 style="margin-bottom:1rem;">Monthly Revenue</h2>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Month</th><th>Revenue</th></tr></thead>
+        <tbody>{% for m in monthly_revenue %}<tr><td>{{ m.month }}</td><td>₹{{ m.revenue }}</td></tr>{% empty %}<tr><td colspan="2">No data</td></tr>{% endfor %}</tbody>
+    </table>
+</div>
+{% endblock %}

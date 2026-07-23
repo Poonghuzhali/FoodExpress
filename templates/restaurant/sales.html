@@ -1,0 +1,24 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Sales{% endblock %}
+{% block sidebar %}
+{% include 'includes/restaurant_sidebar.html' %}
+{% endblock %}
+{% block dashboard_content %}
+<h1>Sales Report</h1>
+<div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon yellow">💰</div><div class="stat-value">₹{{ stats.total_revenue }}</div><div class="stat-label">Total Revenue</div></div>
+    <div class="stat-card"><div class="stat-icon orange">📦</div><div class="stat-value" data-counter="{{ stats.total_orders }}">0</div><div class="stat-label">Delivered Orders</div></div>
+    <div class="stat-card"><div class="stat-icon teal">📊</div><div class="stat-value">₹{{ stats.avg_order|floatformat:0 }}</div><div class="stat-label">Avg Order Value</div></div>
+</div>
+<h2 style="margin:2rem 0 1rem;">Monthly Revenue</h2>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Month</th><th>Orders</th><th>Revenue</th></tr></thead>
+        <tbody>
+            {% for m in monthly %}
+            <tr><td>{{ m.month }}</td><td>{{ m.count }}</td><td>₹{{ m.revenue }}</td></tr>
+            {% empty %}<tr><td colspan="3" style="text-align:center;">No data yet</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

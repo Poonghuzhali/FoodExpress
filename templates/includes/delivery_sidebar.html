@@ -1,0 +1,6 @@
+{% with nav=request.resolver_match.url_name %}
+<a href="{% url 'delivery_dashboard' %}" class="{% if nav == 'delivery_dashboard' %}active{% endif %}">📊 Dashboard</a>
+<a href="{% url 'delivery_orders' %}" class="{% if nav == 'delivery_orders' %}active{% endif %}">📦 Deliveries</a>
+<a href="{% url 'delivery_earnings' %}" class="{% if nav == 'delivery_earnings' %}active{% endif %}">💰 Earnings</a>
+<a href="{% url 'home' %}">🏠 Back to Site</a>
+{% endwith %}

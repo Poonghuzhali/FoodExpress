@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="form-container" style="max-width:560px;">
+        <h1 class="form-title">My Profile</h1>
+        <form method="post" enctype="multipart/form-data" class="validated-form" novalidate>
+            {% csrf_token %}
+            {% include 'includes/form_fields.html' %}
+            <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
