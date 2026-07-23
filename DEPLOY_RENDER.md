@@ -1,46 +1,41 @@
-# Deploy FoodExpress on Render (Web + PostgreSQL)
+# Deploy FoodExpress on Render
 
-Follow these steps on [Render Dashboard](https://dashboard.render.com/) to deploy the app **and database** together.
+## Your error fix
 
-## Option A — Blueprint (recommended)
+If Blueprint shows:
 
-Creates **PostgreSQL database** + **web service** in one step.
+> **Create database foodexpress-db** — cannot have more than one active free tier database
 
-1. Sign in at https://dashboard.render.com/ (use **Continue with GitHub**).
-2. Click **New +** → **Blueprint**.
-3. Connect GitHub if asked, then select repository: **Poonghuzhali/FoodExpress**
-4. Render reads `render.yaml` and shows:
-   - **foodexpress-db** — PostgreSQL (free)
-   - **foodexpress** — Django web service
-5. Click **Apply** and wait 5–10 minutes for build to finish.
+Render free plan allows **only 1 PostgreSQL database** per account. You already have one, so the Blueprint must **not** create a new database.
 
-The web service gets `DATABASE_URL` automatically from the database. Build runs migrations and seeds demo data.
+The repo `render.yaml` is now updated to deploy **web service only**. Use your **existing** database.
 
-## Option B — Manual (database first)
+---
 
-Use this if Blueprint is not available.
+## Deploy now (use existing database)
 
-### Step 1 — Create PostgreSQL database
+### Step 1 — Copy your database URL
 
-1. **New +** → **PostgreSQL**
-2. Name: `foodexpress-db`
-3. Database: `foodexpress`
-4. User: `foodexpress`
-5. Region: **Singapore** (same as web service)
-6. Plan: **Free**
-7. Click **Create Database**
-8. Wait until status is **Available**
-9. Copy **Internal Database URL** from the database page
+1. Open [Render Dashboard](https://dashboard.render.com/)
+2. Click your existing **PostgreSQL** database (e.g. `foodexpress-db`)
+3. Go to **Connect** or **Info** tab
+4. Copy the **Internal Database URL** (starts with `postgresql://...`)
 
-### Step 2 — Create web service
+### Step 2 — Deploy with Blueprint
+
+1. Click **New +** → **Blueprint**
+2. Select repo: **Poonghuzhali/FoodExpress**
+3. Render shows only: **foodexpress** (web service)
+4. When asked for **DATABASE_URL**, paste the **Internal Database URL** from Step 1
+5. Click **Apply** and wait 5–10 minutes
+
+### Alternative — Manual web service
 
 1. **New +** → **Web Service**
-2. Connect repo: **Poonghuzhali/FoodExpress**
+2. Connect **Poonghuzhali/FoodExpress** repo, branch **master**
 3. Settings:
    - **Name:** foodexpress
-   - **Region:** Singapore
-   - **Branch:** master
-   - **Runtime:** Python
+   - **Region:** Singapore (same region as your database)
    - **Build Command:** `bash build.sh`
    - **Start Command:** `gunicorn fooddelivery.wsgi:application --bind 0.0.0.0:$PORT`
 4. Environment variables:
@@ -48,31 +43,30 @@ Use this if Blueprint is not available.
 | Key | Value |
 |-----|-------|
 | `PYTHON_VERSION` | `3.12.3` |
-| `SECRET_KEY` | Generate (random string) |
+| `SECRET_KEY` | Generate random string |
 | `DEBUG` | `False` |
-| `DATABASE_URL` | Paste **Internal Database URL** from Step 1 |
+| `DATABASE_URL` | Your existing **Internal Database URL** |
 
 5. Click **Create Web Service**
 
+---
+
 ## After deploy
 
-- Open your app URL, e.g. `https://foodexpress.onrender.com`
-- Login with demo accounts from README (admin / admin123)
+- App URL: `https://foodexpress.onrender.com` (or the URL Render gives you)
+- Login: **admin** / **admin123**
 
-## Verify database
+Check **Logs** for:
+- `Running database migrations...`
+- `Seeding demo data...`
+- `Build finished successfully.`
 
-In Render → **foodexpress-db** → **Connect** tab, you can open **PSQL** or view connection info.
+---
 
-In web service **Logs**, you should see:
-- `Running migrations...`
-- `Seeding database...`
-- `Created admin (admin/admin123)`
+## Other options
 
-## Troubleshooting
-
-| Problem | Fix |
-|---------|-----|
-| Build fails on migrate | Check `DATABASE_URL` is set on web service |
-| 502 / app not loading | Check **Logs** tab; ensure gunicorn started |
-| CSRF error on login | Redeploy after first deploy (Render sets `RENDER_EXTERNAL_HOSTNAME`) |
-| Free tier slow start | First request after idle may take ~1 minute |
+| Situation | What to do |
+|-----------|------------|
+| Old unused free DB exists | Delete it in Render, then you can create a new one |
+| Want fresh database | Delete old free DB first, then restore `databases:` section in render.yaml |
+| Web service region ≠ DB region | Create web service in **same region** as your PostgreSQL |
