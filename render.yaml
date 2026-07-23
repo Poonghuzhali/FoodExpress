@@ -17,4 +17,14 @@ services:
       - key: DEBUG
         value: "False"
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: foodexpress-db
+          property: connectionString
+
+databases:
+  - name: foodexpress-db
+    plan: free
+    region: singapore
+    databaseName: foodexpress
+    user: foodexpress
+    postgresMajorVersion: "16"
