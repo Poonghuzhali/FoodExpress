@@ -7,11 +7,12 @@ services:
     repo: https://github.com/Poonghuzhali/FoodExpress
     branch: master
     buildCommand: bash build.sh
-    startCommand: gunicorn fooddelivery.wsgi:application --bind 0.0.0.0:$PORT
+    preDeployCommand: python manage.py migrate --no-input && python manage.py seed_data || true
+    startCommand: bash start.sh
     healthCheckPath: /health/
     envVars:
       - key: PYTHON_VERSION
-        value: "3.12.3"
+        value: "3.12.0"
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
