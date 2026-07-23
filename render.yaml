@@ -3,6 +3,9 @@ services:
     name: foodexpress
     runtime: python
     plan: free
+    region: singapore
+    repo: https://github.com/Poonghuzhali/FoodExpress
+    branch: master
     buildCommand: bash build.sh
     startCommand: gunicorn fooddelivery.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
@@ -20,3 +23,7 @@ services:
 databases:
   - name: foodexpress-db
     plan: free
+    region: singapore
+    databaseName: foodexpress
+    user: foodexpress
+    postgresMajorVersion: "16"
