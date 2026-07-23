@@ -8,6 +8,7 @@ services:
     branch: master
     buildCommand: bash build.sh
     startCommand: gunicorn fooddelivery.wsgi:application --bind 0.0.0.0:$PORT
+    healthCheckPath: /health/
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.3"
