@@ -24,7 +24,7 @@ ALLOWED_HOSTS = [
 ]
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-ALLOWED_HOSTS.append('foodexpress.onrender.com')
+ALLOWED_HOSTS.append('foodexpress-lrab.onrender.com')
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
